@@ -1,0 +1,14 @@
+# 自分のチャンネル設定
+own_channel:
+  url: "https://www.youtube.com/@your_channel_handle"  # ← 自分のチャンネルURLに変更してください
+  # channel_id: "UCxxxxxxxxxxxxxxxxxxxxxx"  # URLの代わりにチャンネルIDを直接指定することも可能
+
+# 比較したい、伸びているライバルチャンネル(複数指定可)
+competitor_channels:
+  - url: "https://www.youtube.com/@competitor_channel_1"
+  - url: "https://www.youtube.com/@competitor_channel_2"
+
+# 分析設定
+analysis:
+  max_videos_per_channel: 30  # 各チャンネルにつき直近何本の動画を分析するか
+  top_n_for_pattern: 10       # 「伸びている動画」として型分析する上位本数

@@ -1,0 +1,54 @@
+name: YouTube自動PDCA
+
+on:
+  schedule:
+    # 毎週月曜 09:00 JST (00:00 UTC)。デフォルトブランチでのみ動作する点に注意。
+    - cron: "0 0 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  run-pdca:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run PDCA cycle
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python scripts/run_pdca.py
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: 自動PDCAサイクルの実行結果を更新"
+          file_pattern: "data/**"
+
+      - name: Create issue with latest report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const dir = 'data/reports';
+            const files = fs.readdirSync(dir).filter(f => f.endsWith('.md')).sort();
+            if (files.length === 0) {
+              return;
+            }
+            const latest = files[files.length - 1];
+            const body = fs.readFileSync(path.join(dir, latest), 'utf8');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `YouTube PDCAレポート: ${latest}`,
+              body,
+            });
