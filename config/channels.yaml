@@ -1,6 +1,6 @@
 # 自分のチャンネル設定
 own_channel:
-  url: "https://www.youtube.com/channel/UCU0RzfCCmIsWa0iVpbzExFQ"  # ← 自分のチャンネルURLに変更してください
+  url: "https://www.youtube.com/@sumiaojiji"  # ← 自分のチャンネルURLに変更してください
   # channel_id: "UCxxxxxxxxxxxxxxxxxxxxxx"  # URLの代わりにチャンネルIDを直接指定することも可能
 
 # 比較したい、伸びているライバルチャンネル(複数指定可)
