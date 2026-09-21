@@ -1,12 +1,12 @@
 # 自分のチャンネル設定
 own_channel:
-  url: "https://www.youtube.com/@sumiaojiji"  # ← 自分のチャンネルURLに変更してください
-  # channel_id: "UCxxxxxxxxxxxxxxxxxxxxxx"  # URLの代わりにチャンネルIDを直接指定することも可能
+  url: "https://www.youtube.com/channel/UCU0RzfCCmIsWa0iVpbzExFQ"  # ← 自分のチャンネルURLに変更してください
+  # channel_id: "UCU0RzfCCmIsWa0iVpbzExFQ"  # URLの代わりにチャンネルIDを直接指定することも可能
 
 # 比較したい、伸びているライバルチャンネル(複数指定可)
 competitor_channels:
   - url: "https://www.youtube.com/@pukujiji"
-  - url: ""
+  - url: "https://www.youtube.com/@shimamurider_sub"
 
 # 分析設定
 analysis:
