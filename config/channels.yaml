@@ -6,7 +6,6 @@ own_channel:
 # 比較したい、伸びているライバルチャンネル(複数指定可)
 competitor_channels:
   - url: "https://www.youtube.com/@pukujiji"
-  - url: "https://www.youtube.com/@shimamurider_sub"
 
 # 分析設定
 analysis:
