@@ -53,7 +53,15 @@ competitor_channels:
 analysis:
   max_videos_per_channel: 30
   top_n_for_pattern: 10
+  analyze_thumbnails: true
+  thumbnails_per_channel: 5
+  analyze_comments: true
+  comments_per_video: 20
+  videos_for_comment_analysis: 5
 ```
+
+サムネイル分析・コメント分析はネットワークアクセスとAPIクォータを追加で消費するため、
+不要な場合は `analyze_thumbnails` / `analyze_comments` を `false` にして無効化できます。
 
 ## 実行方法
 
@@ -68,13 +76,25 @@ python scripts/run_pdca.py
 
 ## 分析している指標
 
+### 動画の「型」
 - 平均再生数・中央値
 - エンゲージメント率（(高評価数 + コメント数) / 再生数）
 - 週間投稿頻度
 - 平均動画時間
 - タイトルの平均文字数・数字を含む割合・疑問形の割合
 - 平均タグ数
-- 人気動画タイトルの頻出ワード（自分 vs 競合、簡易分割による抽出）
+- 人気動画タイトルの頻出ワード（[Janome](https://github.com/mocobeta/janome) による形態素解析で名詞を抽出。
+  未インストール時は簡易的な区切り文字分割にフォールバック）
+
+### サムネイル画像（上位動画が対象、`analyze_thumbnails: true` の場合）
+- 平均明度・平均彩度
+- エッジ検出による文字・情報量の推定スコア（0〜1、値が高いほど文字や装飾が多い傾向）
+- [pytesseract](https://github.com/madmaze/pytesseract) がインストールされていれば、実際のOCR文字数も取得（任意）
+
+### 概要欄・コメント（上位動画が対象、`analyze_comments: true` の場合）
+- 概要欄の平均文字数・平均ハッシュタグ数
+- 概要欄にチャンネル登録/高評価/コメント誘導の文言が含まれる動画の割合
+- コメント欄の頻出ワード（自分 vs 競合、視聴者が実際に反応しているトピックの把握用）
 
 これらを「自分の直近動画 vs 競合チャンネル平均」および「自分の今回 vs 前回サイクル」の
 2軸で比較し、差が一定のしきい値（`src/youtube_pdca/pdca.py` の `*_THRESHOLD_PCT`）を
@@ -102,9 +122,10 @@ pytest
 
 ## 制限事項・拡張のアイデア
 
-- タイトルの頻出ワード抽出は簡易的な区切り文字分割によるもので、本格的な日本語形態素解析
-  （[Janome](https://github.com/mocobeta/janome) や MeCab など）を組み込むとより精度が上がります
-- サムネイル画像そのものの分析（文字量・色使いなど）は未対応です。サムネイルURLは
-  `snippet.thumbnails` から取得可能なので、画像解析ライブラリと組み合わせて拡張できます
-- 現在は再生数・エンゲージメント等の「型」の比較のみですが、動画の説明文やコメント欄の
-  内容分析を加えることで、より踏み込んだ企画提案も可能です
+- サムネイルの「文字量」はOCRではなくエッジ検出による推定値がデフォルトです。より正確に
+  測りたい場合は `pip install pytesseract` を追加し、OSに `tesseract-ocr`（`jpn`言語データ含む）
+  をインストールすると、実際の文字数（`avg_ocr_char_count`）も取得できます
+- コメント欄の頻出ワード抽出も Janome による名詞抽出を使っていますが、口語表現や絵文字・
+  スラングの解析精度は限定的です。より高度な感情分析をしたい場合は外部APIとの連携も検討できます
+- 現状の頻出ワード抽出は名詞のみを対象としています。動詞や形容詞も含めたい場合は
+  `src/youtube_pdca/text_patterns.py` の `_tokenize_with_janome` の品詞フィルタを調整してください

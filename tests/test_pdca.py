@@ -42,3 +42,52 @@ def test_generate_act_items_includes_missing_keywords():
     competitor_keywords = [("速報", 5), ("徹底解説", 4)]
     items = _generate_act_items(gaps, None, own_keywords, competitor_keywords)
     assert any("徹底解説" in item for item in items)
+
+
+def test_generate_act_items_flags_thumbnail_text_density_gap():
+    own = base_summary()
+    benchmark = base_summary()
+    gaps = compute_gap(own, benchmark)
+    thumbnail_gaps = {
+        "avg_text_density_score": {
+            "label": "サムネイル文字・情報量スコア(推定, 0-1)",
+            "own": 0.1,
+            "benchmark": 0.5,
+            "diff": 0.4,
+            "diff_pct": 400.0,
+        }
+    }
+    items = _generate_act_items(gaps, None, [], [], thumbnail_gaps=thumbnail_gaps)
+    assert any("サムネイル" in item for item in items)
+
+
+def test_generate_act_items_flags_description_cta_gap():
+    own = base_summary()
+    benchmark = base_summary()
+    gaps = compute_gap(own, benchmark)
+    description_gaps = {
+        "pct_with_cta": {
+            "label": "登録/高評価/コメント誘導の文言を含む割合",
+            "own": 0.1,
+            "benchmark": 0.8,
+            "diff": 0.7,
+            "diff_pct": 700.0,
+        }
+    }
+    items = _generate_act_items(gaps, None, [], [], description_gaps=description_gaps)
+    assert any("概要欄" in item for item in items)
+
+
+def test_generate_act_items_includes_missing_comment_keywords():
+    own = base_summary()
+    benchmark = base_summary()
+    gaps = compute_gap(own, benchmark)
+    items = _generate_act_items(
+        gaps,
+        None,
+        [],
+        [],
+        own_comment_keywords=[("面白い", 2)],
+        competitor_comment_keywords=[("面白い", 3), ("感動した", 5)],
+    )
+    assert any("感動した" in item for item in items)

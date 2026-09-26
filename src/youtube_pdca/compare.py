@@ -12,9 +12,9 @@ METRIC_LABELS = {
 }
 
 
-def compute_gap(own_summary: dict, benchmark_summary: dict) -> dict:
+def compute_gap(own_summary: dict, benchmark_summary: dict, labels: dict[str, str] = METRIC_LABELS) -> dict:
     gaps = {}
-    for key, label in METRIC_LABELS.items():
+    for key, label in labels.items():
         own_val = own_summary.get(key, 0) or 0
         bench_val = benchmark_summary.get(key, 0) or 0
         diff = bench_val - own_val
@@ -29,21 +29,23 @@ def compute_gap(own_summary: dict, benchmark_summary: dict) -> dict:
     return gaps
 
 
-def aggregate_competitor_benchmark(competitor_summaries: list[dict]) -> dict:
+def aggregate_competitor_benchmark(competitor_summaries: list[dict], keys: list[str] | None = None) -> dict:
     if not competitor_summaries:
         return {}
     agg = {}
-    for key in METRIC_LABELS:
+    for key in keys if keys is not None else METRIC_LABELS:
         vals = [c.get(key, 0) or 0 for c in competitor_summaries]
         agg[key] = sum(vals) / len(vals)
     return agg
 
 
-def compute_trend(current_summary: dict, previous_summary: dict | None) -> dict | None:
+def compute_trend(
+    current_summary: dict, previous_summary: dict | None, labels: dict[str, str] = METRIC_LABELS
+) -> dict | None:
     if not previous_summary:
         return None
     trend = {}
-    for key, label in METRIC_LABELS.items():
+    for key, label in labels.items():
         cur = current_summary.get(key, 0) or 0
         prev = previous_summary.get(key, 0) or 0
         diff = cur - prev

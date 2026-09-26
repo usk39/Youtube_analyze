@@ -47,3 +47,29 @@ def test_compute_trend():
     trend = compute_trend(cur, prev)
     assert trend["avg_views"]["diff"] == 200
     assert round(trend["avg_views"]["diff_pct"], 2) == 20.0
+
+
+def test_compute_gap_with_custom_labels():
+    labels = {"avg_brightness": "明度"}
+    own = {"avg_brightness": 100}
+    benchmark = {"avg_brightness": 150}
+    gaps = compute_gap(own, benchmark, labels=labels)
+    assert set(gaps.keys()) == {"avg_brightness"}
+    assert gaps["avg_brightness"]["label"] == "明度"
+    assert gaps["avg_brightness"]["diff"] == 50
+
+
+def test_aggregate_competitor_benchmark_with_custom_keys():
+    c1 = {"avg_brightness": 100, "avg_saturation": 0.2}
+    c2 = {"avg_brightness": 200, "avg_saturation": 0.4}
+    benchmark = aggregate_competitor_benchmark([c1, c2], keys=["avg_brightness"])
+    assert benchmark == {"avg_brightness": 150}
+
+
+def test_compute_trend_with_custom_labels():
+    labels = {"avg_hashtag_count": "ハッシュタグ数"}
+    prev = {"avg_hashtag_count": 2}
+    cur = {"avg_hashtag_count": 4}
+    trend = compute_trend(cur, prev, labels=labels)
+    assert set(trend.keys()) == {"avg_hashtag_count"}
+    assert trend["avg_hashtag_count"]["diff"] == 2

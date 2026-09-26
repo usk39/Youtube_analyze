@@ -25,6 +25,11 @@ class AppConfig:
     competitor_channels: list[ChannelConfig]
     max_videos_per_channel: int = 30
     top_n_for_pattern: int = 10
+    analyze_thumbnails: bool = True
+    thumbnails_per_channel: int = 5
+    analyze_comments: bool = True
+    comments_per_video: int = 20
+    videos_for_comment_analysis: int = 5
 
 
 def load_config(path: Path) -> AppConfig:
@@ -49,4 +54,9 @@ def load_config(path: Path) -> AppConfig:
         competitor_channels=competitors,
         max_videos_per_channel=analysis.get("max_videos_per_channel", 30),
         top_n_for_pattern=analysis.get("top_n_for_pattern", 10),
+        analyze_thumbnails=analysis.get("analyze_thumbnails", True),
+        thumbnails_per_channel=analysis.get("thumbnails_per_channel", 5),
+        analyze_comments=analysis.get("analyze_comments", True),
+        comments_per_video=analysis.get("comments_per_video", 20),
+        videos_for_comment_analysis=analysis.get("videos_for_comment_analysis", 5),
     )

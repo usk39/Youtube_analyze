@@ -114,3 +114,29 @@ def get_videos_details(youtube, video_ids: list[str]) -> list[dict]:
 def get_recent_videos(youtube, uploads_playlist_id: str, max_results: int) -> list[dict]:
     video_ids = get_recent_video_ids(youtube, uploads_playlist_id, max_results)
     return get_videos_details(youtube, video_ids)
+
+
+def get_top_comments(youtube, video_id: str, max_results: int = 20) -> list[str]:
+    """動画の上位コメント本文を取得する。コメント無効化・非公開等で失敗した場合は空リストを返す。"""
+    try:
+        resp = (
+            youtube.commentThreads()
+            .list(
+                part="snippet",
+                videoId=video_id,
+                maxResults=min(max_results, 100),
+                order="relevance",
+                textFormat="plainText",
+            )
+            .execute()
+        )
+    except Exception:
+        return []
+
+    comments = []
+    for item in resp.get("items", []):
+        snippet = item.get("snippet", {}).get("topLevelComment", {}).get("snippet", {})
+        text = snippet.get("textDisplay")
+        if text:
+            comments.append(text)
+    return comments

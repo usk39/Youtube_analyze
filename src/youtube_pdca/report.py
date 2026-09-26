@@ -70,6 +70,32 @@ def render_markdown(report: dict) -> str:
         lines.append(f"- 競合: {', '.join(f'{w}({c})' for w, c in comp_kw[:10]) or 'なし'}")
         lines.append("")
 
+    thumbnail_gaps = report.get("thumbnail_gaps") or {}
+    if thumbnail_gaps:
+        lines.append("### サムネイル分析（上位動画・推定値）")
+        lines.append("| 指標 | 自分 | 競合平均 | 差分(%) |")
+        lines.append("|---|---|---|---|")
+        for g in thumbnail_gaps.values():
+            lines.append(f"| {g['label']} | {g['own']:.2f} | {g['benchmark']:.2f} | {g['diff_pct']:+.1f}% |")
+        lines.append("")
+
+    description_gaps = report.get("description_gaps") or {}
+    if description_gaps:
+        lines.append("### 概要欄分析（上位動画の平均）")
+        lines.append("| 指標 | 自分 | 競合平均 | 差分(%) |")
+        lines.append("|---|---|---|---|")
+        for g in description_gaps.values():
+            lines.append(f"| {g['label']} | {g['own']:.2f} | {g['benchmark']:.2f} | {g['diff_pct']:+.1f}% |")
+        lines.append("")
+
+    own_comment_kw = report.get("own_comment_keywords") or []
+    comp_comment_kw = report.get("competitor_comment_keywords") or []
+    if own_comment_kw or comp_comment_kw:
+        lines.append("### コメント欄の頻出ワード（視聴者の反応）")
+        lines.append(f"- 自分の動画: {', '.join(f'{w}({c})' for w, c in own_comment_kw[:10]) or 'なし'}")
+        lines.append(f"- 競合動画: {', '.join(f'{w}({c})' for w, c in comp_comment_kw[:10]) or 'なし'}")
+        lines.append("")
+
     lines.append("## Act（次のアクション）")
     for item in report["act"]:
         lines.append(f"- [ ] {item}")

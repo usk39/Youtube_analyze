@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
+from .thumbnail_analysis import best_thumbnail_url
+
 _DURATION_RE = re.compile(r"^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$")
 
 
@@ -33,6 +35,8 @@ def compute_video_metrics(video: dict) -> dict:
     return {
         "video_id": video.get("id"),
         "title": title,
+        "description": snippet.get("description", ""),
+        "thumbnail_url": best_thumbnail_url(snippet.get("thumbnails") or {}),
         "published_at": snippet.get("publishedAt"),
         "views": views,
         "likes": likes,

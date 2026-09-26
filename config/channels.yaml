@@ -10,5 +10,10 @@ competitor_channels:
 
 # 分析設定
 analysis:
-  max_videos_per_channel: 30  # 各チャンネルにつき直近何本の動画を分析するか
-  top_n_for_pattern: 10       # 「伸びている動画」として型分析する上位本数
+  max_videos_per_channel: 30       # 各チャンネルにつき直近何本の動画を分析するか
+  top_n_for_pattern: 10            # 「伸びている動画」として型分析する上位本数
+  analyze_thumbnails: true         # サムネイル画像の明度・彩度・文字量を分析するか
+  thumbnails_per_channel: 5        # サムネイル分析の対象にする上位動画数(画像取得が発生するため少なめ推奨)
+  analyze_comments: true           # コメント欄の頻出ワードを分析するか
+  comments_per_video: 20           # 1動画あたり取得するコメント数
+  videos_for_comment_analysis: 5   # コメント分析の対象にする上位動画数
